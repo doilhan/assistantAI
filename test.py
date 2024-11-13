@@ -12,7 +12,7 @@ api_key_options = {
     },
     "pb_dfwn9qdxXDu2KiObFk9WAA": {
         "deployment_ids": ["aiku-solar-mini"],
-        "adapter_ids": ["solar-ta-mini-beta/1", "solar-ta-mini-beta/3", "solar-ta-mini-beta/6"]
+        "adapter_ids": ["solar-ta-mini-beta/1", "solar-ta-mini-beta/3", "solar-ta-mini-beta/6", "baseline"]
     }
 }
 
@@ -40,8 +40,10 @@ def generate_response(user_input, deployment_id, adapter_id, max_new_tokens, tem
         lorax_client = pb.deployments.client(deployment_id)
         
         # Send user input to the Predibase model and get the generated response
-        response = lorax_client.generate(user_input, adapter_id=adapter_id, max_new_tokens=max_new_tokens, temperature=temperature)
-        print(response)
+        if adapter_id == "baseline":
+            response = lorax_client.generate(user_input, max_new_tokens=max_new_tokens, temperature=temperature)
+        else:
+            response = lorax_client.generate(user_input, adapter_id=adapter_id, max_new_tokens=max_new_tokens, temperature=temperature)            
         return response.generated_text
     except Exception as e:
         return f"Error: {str(e)}"
